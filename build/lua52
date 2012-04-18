@@ -1,0 +1,60 @@
+lua52_package="lua"
+lua52_version="5.2.0"
+
+lua52_url="http://www.lua.org/ftp/"
+lua52_path="$lua52_package-$lua52_version"
+lua52_file="$lua52_path.tar.gz"
+lua52_md5sum="f1ea831f397214bae8a265995ab1a93e"
+
+lua52_desc() {
+	echo "	lua52		The Programming Language Lua 5.2 http://www.lua.org/"
+}
+
+lua52_download() {
+	download "$lua52_url" "$lua52_file" "$lua52_md5sum"
+}
+
+lua52_build() {
+	tar xzf "$lua52_file"
+	cd "$lua52_path/src"
+	make all MYCFLAGS="-DLUA_USE_POSIX -DLUA_USEDLOPEN" MYLIBS="-Wl,-E -ldl" MYLDFLAGS=-s &&
+	make liblua52.so LUA_A=liblua52.so "AR=gcc -Wl,-E -shared -o" "RANLIB=strip --strip-unneeded"
+	cd ../..
+}
+
+lua52_package() {
+	mkdir -p package/usr/bin package/usr/lib
+	mkdir -p package/usr/local/share/lua/5.2 package/usr/local/lib/lua/5.2
+	cp "$lua52_path/src/lua" package/usr/bin/lua52
+	cp "$lua52_path/src/liblua52.so" package/usr/lib
+	ln -s lua52 package/usr/bin/lua
+	ln -s liblua52.so package/usr/lib/liblua.so
+}
+
+lua52_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/lua52.version"
+		VERSION=$lua52_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+lua52_clean() {
+	rm -rf "$lua52_path"
+	rm -f "lua52.tgz"
+}
+
+lua52_install() {
+	cd "$lua52_path/src"
+	cp lua /usr/bin/lua52
+	cp luac /usr/bin/luac52
+	cp liblua.a /usr/lib/liblua52.a
+	cp liblua52.so /usr/lib
+	mkdir /usr/include/lua5.2
+	cp lualib.h luaconf.h lua.hpp lua.h lauxlib.h /usr/include/lua5.2
+	cd ../..
+}
+
+lua52_uninstall() {
+	rm -f /usr/bin/lua52 /usr/bin/luac52 /usr/lib/liblua52.a /usr/lib/liblua52.so
+	rm -rf /usr/include/lua5.2
+}

@@ -1,0 +1,50 @@
+haserl_package="haserl"
+haserl_version="0.9.29"
+
+haserl_url="http://sourceforge.net/projects/haserl/files/haserl-devel/"
+haserl_path="$haserl_package-$haserl_version"
+haserl_file="$haserl_path.tar.gz"
+haserl_md5sum="4cac9409530200b4a7a82a48ec174800"
+
+haserl_desc() {
+	echo "	$haserl_package		A cgi scripting program for embedded environments"
+	echo "			http://haserl.sourceforge.net/"
+}
+
+haserl_download() {
+	download "$haserl_url" "$haserl_file" "$haserl_md5sum"
+}
+
+haserl_build() {
+	tar xzf "$haserl_file"
+	cd "$haserl_path"
+	if [ ! -f Makefile ]; then
+		if [ ! -f /usr/include/lua.h -a -d /usr/include/lua5.1 ]; then
+			if ! pkg-config --version > /dev/null; then # lie to configure
+				sed -i 's,pkg-config --exists lua5.1,true,' configure
+				sed -i 's,`pkg-config .LUALIB --cflags`,-I/usr/include/lua5.1,' configure
+			fi
+		fi
+		./configure --with-lua
+	fi
+	make
+	cd ..
+}
+
+haserl_package() {
+	strip "$haserl_path/src/haserl"
+	mkdir -p package/usr/bin
+	cp "$haserl_path/src/haserl" package/usr/bin
+}
+
+haserl_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$haserl_package.version"
+		VERSION=$haserl_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+haserl_clean() {
+	rm -rf "$haserl_path"
+	rm -f "$haserl_package.tgz"
+}

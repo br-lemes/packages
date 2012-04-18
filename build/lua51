@@ -1,0 +1,60 @@
+lua51_package="lua"
+lua51_version="5.1.5"
+
+lua51_url="http://www.lua.org/ftp/"
+lua51_path="$lua51_package-$lua51_version"
+lua51_file="$lua51_path.tar.gz"
+lua51_md5sum="2e115fe26e435e33b0d5c022e4490567"
+
+lua51_desc() {
+	echo "	lua51		The Programming Language Lua 5.1 http://www.lua.org/"
+}
+
+lua51_download() {
+	download "$lua51_url" "$lua51_file" "$lua51_md5sum"
+}
+
+lua51_build() {
+	tar xzf "$lua51_file"
+	cd "$lua51_path/src"
+	make all MYCFLAGS="-DLUA_USE_POSIX -DLUA_USEDLOPEN" MYLIBS="-Wl,-E -ldl" MYLDFLAGS=-s &&
+	make liblua5.1.so LUA_A=liblua5.1.so "AR=gcc -Wl,-E -shared -o" "RANLIB=strip --strip-unneeded"
+	cd ../..
+}
+
+lua51_package() {
+	mkdir -p package/usr/bin package/usr/lib
+	mkdir -p package/usr/local/share/lua/5.1 package/usr/local/lib/lua/5.1
+	cp "$lua51_path/src/lua" package/usr/bin/lua5.1
+	cp "$lua51_path/src/liblua5.1.so" package/usr/lib
+	ln -s lua5.1 package/usr/bin/lua
+	ln -s liblua5.1.so package/usr/lib/liblua.so
+}
+
+lua51_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/lua51.version"
+		VERSION=$lua51_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+lua51_clean() {
+	rm -rf "$lua51_path"
+	rm -f "lua51.tgz"
+}
+
+lua51_install() {
+	cd "$lua51_path/src"
+	cp lua /usr/bin/lua5.1
+	cp luac /usr/bin/luac5.1
+	cp liblua.a /usr/lib/liblua5.1.a
+	cp liblua5.1.so /usr/lib
+	mkdir /usr/include/lua5.1
+	cp lualib.h luaconf.h ../etc/lua.hpp lua.h lauxlib.h /usr/include/lua5.1
+	cd ../..
+}
+
+lua51_uninstall() {
+	rm -f /usr/bin/lua5.1 /usr/bin/luac5.1 /usr/lib/liblua5.1.a /usr/lib/liblua5.1.so
+	rm -rf /usr/include/lua5.1
+}

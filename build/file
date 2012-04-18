@@ -1,0 +1,43 @@
+file_package="file"
+file_version="5.11"
+
+file_url="ftp://ftp.astron.com/pub/file/"
+file_path="$file_package-$file_version"
+file_file="$file_path.tar.gz"
+file_md5sum="16a407bd66d6c7a832f3a5c0d609c27b"
+
+file_desc() {
+	echo "	$file_package		A file type guesser http://www.darwinsys.com/file/"
+}
+
+file_download() {
+	download "$file_url" "$file_file" "$file_md5sum"
+}
+
+file_build() {
+	tar xzf "$file_file"
+	cd "$file_path"
+	if [ ! -f Makefile ]; then
+		sed -i 's/-Wextra//' configure*
+		./configure --prefix=/usr
+	fi
+	make
+	cd ..
+}
+
+file_package() {
+	make -C "$file_path" install prefix="$PWD/package/usr"
+	rm -rf package/usr/include package/usr/lib/*a package/usr/share/man
+}
+
+file_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$file_package.version"
+		VERSION=$file_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+file_clean() {
+	rm -rf "$file_path"
+	rm -f "$file_package.tgz"
+}
