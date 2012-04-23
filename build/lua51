@@ -6,9 +6,7 @@ lua51_path="$lua51_package-$lua51_version"
 lua51_file="$lua51_path.tar.gz"
 lua51_md5sum="2e115fe26e435e33b0d5c022e4490567"
 
-lua51_desc() {
-	echo "	lua51		The Programming Language Lua 5.1 http://www.lua.org/"
-}
+lua51_desc="	lua51		The Programming Language Lua 5.1 http://www.lua.org/"
 
 lua51_download() {
 	download "$lua51_url" "$lua51_file" "$lua51_md5sum"

@@ -29,9 +29,13 @@
 set -e 
 
 # É a primeira versão, mas não quero confundir com o build script antigo
-BUILD_VERSION="2" 
+BUILD_VERSION="3" 
 
-BUILD_TARGETS=$(echo build/* | sed 's,build/,,g; s,build.sh ,,')
+BUILD_TARGETS=$(echo build/* | sed 's,build/,,g')
+
+for i in $BUILD_TARGETS; do
+  . build/$i
+done
 
 usage() {
 cat <<EOF
@@ -47,8 +51,7 @@ Commands:
 Packages:
 EOF
 for i in $BUILD_TARGETS; do
-	local desc="${i}_desc"
-	$desc
+	eval echo \"\$${i}_desc\"
 done
 cat <<EOF
 	all		Run the command in all available packages (default)
@@ -134,24 +137,21 @@ uninstall() {
 	fi
 }
 
-main() {
-	local command build_pkg found_pkg
-	case "$1" in
-		package|install|uninstall|clean) command="$1";;
-		-h) usage;;
-		-v) version;;
-		*) echo "Invalid command: $1" >&2; exit 1;;
-	esac
-	found_pkg=0
-	for i in $BUILD_TARGETS; do
-		if [ "$2" = "" -o "$2" = "all" -o "$2" = "$i" ]; then
-			found_pkg=1
-			$command "$i"
-		fi
-	done
-	if test "$found_pkg" = 0; then
-		echo "Invalid package: $2" >&2
-		exit 1
+local command build_pkg found_pkg
+case "$1" in
+	package|install|uninstall|clean) command="$1";;
+	-h) usage;;
+	-v) version;;
+	*) echo "Invalid command: $1" >&2; exit 1;;
+esac
+found_pkg=0
+for i in $BUILD_TARGETS; do
+	if [ "$2" = "" -o "$2" = "all" -o "$2" = "$i" ]; then
+		found_pkg=1
+		$command "$i"
 	fi
-	exit 0
-}
+done
+if test "$found_pkg" = 0; then
+	echo "Invalid package: $2" >&2
+	exit 1
+fi

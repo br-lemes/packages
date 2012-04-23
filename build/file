@@ -6,9 +6,7 @@ file_path="$file_package-$file_version"
 file_file="$file_path.tar.gz"
 file_md5sum="16a407bd66d6c7a832f3a5c0d609c27b"
 
-file_desc() {
-	echo "	$file_package		A file type guesser http://www.darwinsys.com/file/"
-}
+file_desc="	$file_package		A file type guesser http://www.darwinsys.com/file/"
 
 file_download() {
 	download "$file_url" "$file_file" "$file_md5sum"

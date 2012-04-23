@@ -6,10 +6,8 @@ haserl_path="$haserl_package-$haserl_version"
 haserl_file="$haserl_path.tar.gz"
 haserl_md5sum="4cac9409530200b4a7a82a48ec174800"
 
-haserl_desc() {
-	echo "	$haserl_package		A cgi scripting program for embedded environments"
-	echo "			http://haserl.sourceforge.net/"
-}
+haserl_desc="	$haserl_package		A cgi scripting program for embedded environments
+			http://haserl.sourceforge.net/"
 
 haserl_download() {
 	download "$haserl_url" "$haserl_file" "$haserl_md5sum"
