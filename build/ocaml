@@ -1,0 +1,60 @@
+ocaml_package="ocaml"
+ocaml_version="3.12.1"
+
+ocaml_url="http://caml.inria.fr/pub/distrib/ocaml-3.12/"
+ocaml_path="$ocaml_package-$ocaml_version"
+ocaml_file="$ocaml_path.tar.bz2"
+ocaml_md5sum="227a3daaedb150bf5037a3db01f5bf42"
+
+ocaml_desc="	$ocaml_package		The Caml Language http://caml.inria.fr/ocaml/"
+
+ocaml_download() {
+	download "$ocaml_url" "$ocaml_file" "$ocaml_md5sum"
+}
+
+ocaml_build() {
+	tar xjf "$ocaml_file"
+	cd "$ocaml_path"
+	[ ! -f config/Makefile ] && ./configure --prefix /usr
+	make world.opt
+	cd ..
+}
+
+ocaml_package() {
+	make -C "$ocaml_path" install PREFIX="$PWD/package/usr"
+	make -C "$ocaml_path" installopt PREFIX="$PWD/package/usr"
+	rm -rf package/usr/man
+}
+
+ocaml_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$ocaml_package.version"
+		VERSION=$ocaml_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+ocaml_clean() {
+	rm -rf "$ocaml_path"
+	rm -f "$ocaml_package.tgz"
+}
+
+ocaml_install() {
+	make -C "$ocaml_path" install PREFIX="$PWD/temp/usr"
+	make -C "$ocaml_path" installopt PREFIX="$PWD/temp/usr"
+	rm -rf temp/usr/man
+	cp -r temp/usr /
+	rm -rf temp
+}
+
+ocaml_uninstall() {
+	rm -rf /usr/lib/ocaml
+	local bin="camlp4 camlp4boot camlp4o camlp4of camlp4of.opt camlp4oof
+camlp4oof.opt camlp4o.opt camlp4orf camlp4orf.opt camlp4prof camlp4r camlp4rf
+camlp4rf.opt camlp4r.opt mkcamlp4 ocaml ocamlbuild ocamlbuild.byte
+ocamlbuild.native ocamlc ocamlc.opt ocamlcp ocamldebug ocamldep ocamldep.opt
+ocamldoc ocamldoc.opt ocamllex ocamllex.opt ocamlmklib ocamlmktop ocamlobjinfo
+ocamlopt ocamlopt.opt ocamlprof ocamlrun ocamlyacc"
+	for i in $bin; do
+		rm -f /usr/bin/$bin
+	done
+}

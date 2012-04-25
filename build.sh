@@ -137,7 +137,6 @@ uninstall() {
 	fi
 }
 
-local command build_pkg found_pkg
 case "$1" in
 	package|install|uninstall|clean) command="$1";;
 	-h) usage;;
@@ -146,7 +145,11 @@ case "$1" in
 esac
 found_pkg=0
 for i in $BUILD_TARGETS; do
-	if [ "$2" = "" -o "$2" = "all" -o "$2" = "$i" ]; then
+	if [ "$2" = "$i" ]; then
+		found_pkg=1
+		$command "$i"
+	fi
+	if [ "$2" = "all" -o "$2" = "" ] && [ "$i" != "ocaml" -a "$i" != "unison" ]; then
 		found_pkg=1
 		$command "$i"
 	fi

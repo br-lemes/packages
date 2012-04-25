@@ -1,0 +1,39 @@
+unison_package="unison"
+unison_version="2.40.63"
+
+unison_url="http://www.seas.upenn.edu/~bcpierce/unison/download/releases/stable/"
+unison_path="$unison_package-$unison_version"
+unison_file="$unison_path.tar.gz"
+unison_md5sum="3281207850cf6f0a17fe73f371893bd3"
+
+unison_desc="	$unison_package		A file-synchronization tool for Unix and Windows
+			http://www.cis.upenn.edu/~bcpierce/unison/"
+
+unison_download() {
+	download "$unison_url" "$unison_file" "$unison_md5sum"
+}
+
+unison_build() {
+	tar xzf "$unison_file"
+	cd "$unison_path"
+	make UISTYLE=text ETAGS=true
+	strip unison
+	cd ..
+}
+
+unison_package() {
+	mkdir -p package/usr/bin
+	cp "$unison_path/unison" package/usr/bin
+}
+
+unison_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$unison_package.version"
+		VERSION=$unison_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+unison_clean() {
+	rm -rf "$unison_path"
+	rm -f "$unison_package.tgz"
+}
