@@ -1,0 +1,28 @@
+#!/bin/sh
+
+. /etc/coyote/coyote.conf
+. /etc/coyote/unison.conf
+
+[ ! -d /partition/.unison ] && mkdir /partition/.unison
+
+PID=$(pidof unison)
+
+unison_start() {
+  echo "Starting unison socket server"
+  logger "Starting unison socket server"
+  export HOME=/root
+  [ -z "$PID" ] && unison -socket $UNISON_SOCKET 2>> /dev/null &
+}
+
+unison_stop() {
+ echo "Stopping unison socket server"
+ logger "Stopping unison socket server"
+ [ -n "$PID" ] && kill $PID
+}
+
+case $1 in
+ start) unison_start;;
+ stop) unison_stop;;
+ restart) unison_stop;unison_start;;
+ *) if [ "$UNISON_ENABLE" = "YES" ]; then unison_start; fi;;
+esac

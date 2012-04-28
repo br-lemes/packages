@@ -1,0 +1,3 @@
+#!/bin/sh
+#TITLE=Stoping Unison ...
+/etc/rc.d/pkgs/rc.unison stop

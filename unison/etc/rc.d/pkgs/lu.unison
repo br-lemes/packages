@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. /etc/coyote/coyote.conf
+. /etc/coyote/unison.conf
+
+iptables -A remote-admin -p tcp -s ! $LOCAL_IPADDR --dport $UNISON_SOCKET -j REJECT
