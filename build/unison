@@ -24,6 +24,10 @@ unison_build() {
 unison_package() {
 	mkdir -p package/usr/bin
 	cp "$unison_path/unison" package/usr/bin
+	cp -r etc package
+	echo "unison.cfg unison.conf" > package/var/lib/lrpkg/$unison_package.config_files
+	mkdir -p package/root
+	ln -s /partition/.unison package/root
 }
 
 unison_version() {
