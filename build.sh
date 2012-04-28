@@ -28,8 +28,7 @@
 # de desenvolvimento, não de usuário final.
 set -e 
 
-# É a primeira versão, mas não quero confundir com o build script antigo
-BUILD_VERSION="3" 
+BUILD_VERSION="4" 
 
 BUILD_TARGETS=$(echo build/* | sed 's,build/,,g')
 
@@ -149,7 +148,7 @@ for i in $BUILD_TARGETS; do
 		found_pkg=1
 		$command "$i"
 	fi
-	if [ "$2" = "all" -o "$2" = "" ] && [ "$i" != "ocaml" -a "$i" != "unison" ]; then
+	if [ "$2" = "all" -o "$2" = "" ] && [ "$i" != "ocaml" -a "$i" != "unison" -o "$command" = "clean" ]; then
 		found_pkg=1
 		$command "$i"
 	fi
