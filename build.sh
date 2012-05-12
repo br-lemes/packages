@@ -28,7 +28,7 @@
 # de desenvolvimento, não de usuário final.
 set -e 
 
-BUILD_VERSION="4" 
+BUILD_VERSION="5"
 
 BUILD_TARGETS=$(echo build/* | sed 's,build/,,g')
 
@@ -94,8 +94,7 @@ package() {
 	func="${1}_package";$func
 	func="${1}_version";$func
 	touch "package/var/lib/lrpkg/$1.list"
-	find package -type d -empty | sed 's,package/,,' > "package/var/lib/lrpkg/$1.list"
-	find package -type f | sed 's,package/,,' >> "package/var/lib/lrpkg/$1.list"
+	find package -type f | sed 's,package/,,' > "package/var/lib/lrpkg/$1.list"
 	find package -type l | sed 's,package/,,' >> "package/var/lib/lrpkg/$1.list"
 	cd package
 	tar czf "../$1.tgz" *
@@ -126,7 +125,7 @@ install() {
 }
 
 uninstall() {
-	# Alguns pacotes podem não ter o comando install e isso é perfeitamente normal
+	# Alguns pacotes podem não ter o comando uninstall e isso é perfeitamente normal
 	local func="${1}_uninstall"
 	if type $func > /dev/null 2>&1; then
 		[ ! -d "$1" ] && mkdir "$1"
