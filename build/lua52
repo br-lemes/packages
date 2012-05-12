@@ -22,7 +22,7 @@ lua52_build() {
 
 lua52_package() {
 	mkdir -p package/usr/bin package/usr/lib
-	mkdir -p package/usr/local/share/lua/5.2 package/usr/local/lib/lua/5.2
+	# mkdir -p package/usr/local/share/lua/5.2 package/usr/local/lib/lua/5.2
 	cp "$lua52_path/src/lua" package/usr/bin/lua52
 	cp "$lua52_path/src/liblua52.so" package/usr/lib
 	ln -s lua52 package/usr/bin/lua

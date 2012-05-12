@@ -22,7 +22,7 @@ lua51_build() {
 
 lua51_package() {
 	mkdir -p package/usr/bin package/usr/lib
-	mkdir -p package/usr/local/share/lua/5.1 package/usr/local/lib/lua/5.1
+	# mkdir -p package/usr/local/share/lua/5.1 package/usr/local/lib/lua/5.1
 	cp "$lua51_path/src/lua" package/usr/bin/lua5.1
 	cp "$lua51_path/src/liblua5.1.so" package/usr/lib
 	ln -s lua5.1 package/usr/bin/lua
