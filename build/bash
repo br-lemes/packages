@@ -1,0 +1,41 @@
+bash_package="bash"
+bash_version="4.2"
+
+bash_url="http://ftp.gnu.org/gnu/bash/"
+bash_path="$bash_package-$bash_version"
+bash_file="$bash_path.tar.gz"
+bash_md5sum="3fb927c7c33022f1c327f14a81c0d4b0"
+
+bash_desc="	$bash_package		Bourne Again Shell http://www.gnu.org/software/bash/"
+
+bash_download() {
+	download "$bash_url" "$bash_file" "$bash_md5sum"
+}
+
+bash_build() {
+	tar xzf "$bash_file"
+	cd "$bash_path"
+	if [ ! -f Makefile ]; then
+		./configure --prefix /usr --with-included-gettext
+	fi
+	make
+	cd ..
+}
+
+bash_package() {
+	mkdir -p package/bin
+	cp "$bash_path/bash" package/bin
+	strip package/bin/bash
+}
+
+bash_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$bash_package.version"
+		VERSION=$bash_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+bash_clean() {
+	rm -rf "$bash_path"
+	rm -f "$bash_package.tgz"
+}
