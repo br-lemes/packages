@@ -1,0 +1,42 @@
+libiconv_package="libiconv"
+libiconv_version="1.14"
+
+libiconv_url="http://ftp.gnu.org/pub/gnu/libiconv/"
+libiconv_path="$libiconv_package-$libiconv_version"
+libiconv_file="$libiconv_path.tar.gz"
+libiconv_md5sum="e34509b1623cec449dfeb73d7ce9c6c6"
+
+libiconv_desc="	$libiconv_package		The iconv library http://www.gnu.org/software/libiconv/"
+
+libiconv_download() {
+	download "$libiconv_url" "$libiconv_file" "$libiconv_md5sum"
+}
+
+libiconv_build() {
+	tar xzf "$libiconv_file"
+	cd "$libiconv_path"
+	if [ ! -f Makefile ]; then
+		./configure --prefix /usr
+	fi
+	make
+	cd ..
+}
+
+libiconv_package() {
+	make -C "$libiconv_path" install DESTDIR="$PWD/package"
+	strip package/usr/bin/iconv
+	strip package/usr/lib/*.so
+	rm -rf package/usr/include package/usr/share
+}
+
+libiconv_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$libiconv_package.version"
+		VERSION=$libiconv_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+libiconv_clean() {
+	rm -rf "$libiconv_path"
+	rm -f "$libiconv_package.tgz"
+}
