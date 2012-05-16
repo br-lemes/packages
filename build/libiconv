@@ -6,7 +6,7 @@ libiconv_path="$libiconv_package-$libiconv_version"
 libiconv_file="$libiconv_path.tar.gz"
 libiconv_md5sum="e34509b1623cec449dfeb73d7ce9c6c6"
 
-libiconv_desc="	$libiconv_package		The iconv library http://www.gnu.org/software/libiconv/"
+libiconv_desc="	$libiconv_package	The iconv library http://www.gnu.org/software/libiconv/"
 
 libiconv_download() {
 	download "$libiconv_url" "$libiconv_file" "$libiconv_md5sum"
