@@ -1,0 +1,42 @@
+wget_package="wget"
+wget_version="1.13"
+
+wget_url="http://ftp.gnu.org/gnu/wget/"
+wget_path="$wget_package-$wget_version"
+wget_file="$wget_path.tar.gz"
+wget_md5sum="d3698837e6a9567ca9be10f115989940"
+
+wget_desc="	$wget_package		Tool for retrieving files using HTTP, HTTPS and FTP.
+			http://www.gnu.org/software/wget/"
+
+wget_download() {
+	download "$wget_url" "$wget_file" "$wget_md5sum"
+}
+
+wget_build() {
+	tar xzf "$wget_file"
+	cd "$wget_path"
+	if [ ! -f Makefile ]; then
+		./configure --prefix /usr --without-ssl
+	fi
+	make
+	cd ..
+}
+
+wget_package() {
+	mkdir -p package/usr/bin
+	cp "$wget_path/src/wget" package/usr/bin
+	strip package/usr/bin/wget
+}
+
+wget_version() {
+	cat <<-EOF > "package/var/lib/lrpkg/$wget_package.version"
+		VERSION=$wget_version-$BUILD_VERSION
+		BUILD=$(date +%F-%Z)
+	EOF
+}
+
+wget_clean() {
+	rm -rf "$wget_path"
+	rm -f "$wget_package.tgz"
+}
