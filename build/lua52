@@ -1,10 +1,10 @@
 lua52_package="lua"
-lua52_version="5.2.0"
+lua52_version="5.2.1"
 
 lua52_url="http://www.lua.org/ftp/"
 lua52_path="$lua52_package-$lua52_version"
 lua52_file="$lua52_path.tar.gz"
-lua52_md5sum="f1ea831f397214bae8a265995ab1a93e"
+lua52_md5sum="ae08f641b45d737d12d30291a5e5f6e3"
 
 lua52_desc="	lua52		The Programming Language Lua 5.2 http://www.lua.org/"
 
